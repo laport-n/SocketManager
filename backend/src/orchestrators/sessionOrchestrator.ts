@@ -2,11 +2,11 @@ import { ExtendedError } from "socket.io/dist/namespace";
 import { JSONUtils } from "../utils/JSONutils";
 import { Redis } from "../modules/redis/redis";
 import { TSession } from "../modules/redis/types/TSession";
-import * as Logger from "bunyan";
 import { UserController } from "../controllers/userController";
 import { EventController } from "../controllers/eventControllers";
 import { SessionController } from "../controllers/sessionController";
 import mongoose from "mongoose";
+import * as Logger from "bunyan";
 
 export class SessionOrchestrator {
 
@@ -35,7 +35,6 @@ export class SessionOrchestrator {
 
     public async authenticateSession(sessionId: string, socket: any, next: (err?: ExtendedError | undefined) => void): Promise<void> {
         if (!socket.handshake.auth.isPublic) {
-            this.log.info(`PUBLIC_SESSION passed in the socket : ${sessionId} connecting`);
             if (sessionId) {
                 if (await this.isSessionExist(sessionId, socket, next)) return next();
             }
@@ -54,9 +53,8 @@ export class SessionOrchestrator {
         const userId = await (await this.userController.saveOne(sessionId, {...socket.context}))._id;
         socket.data.userId = userId;
         socket.data.sessionId = sessionId;
-        this.log.info(`NEW PUBLIC_SESSION IS : ${socket.data.sessionId}`);
+        this.log.info(`NEW PUBLIC_SESSION : ${socket.data.sessionId}`);
         await this.redis.set(sessionId.toString(), JSON.stringify(socket.data));
-        this.log.info(socket.data, `REDIS SAVED`);
         socket.emit('authenticated', { ...socket.data });
     }
 

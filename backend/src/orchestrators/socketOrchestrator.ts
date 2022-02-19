@@ -5,16 +5,19 @@ import { config as mongoConfig } from "../modules/mongo/config";
 import { Mongo } from '../modules/mongo/mongo';
 import { EventController } from '../controllers/eventControllers';
 import { SessionOrchestrator } from './sessionOrchestrator';
+import * as Logger from "bunyan";
 
 export class SocketOrchestrator {
     private io;
+    private log: any;
     private redis: Redis;
     private mongo: Mongo;
     private sessionOrchestrator: SessionOrchestrator;
     private eventController: EventController;
 
     constructor(server: any) {
-        try {            
+        try {
+            this.log = Logger.createLogger({name: "SocketOrchestrator"});
             // Socket.io
             this.io = new Server(server);
 
@@ -45,10 +48,16 @@ export class SocketOrchestrator {
 
         this.io.on('connection', async (socket) => {
             socket.onAny(async (eventName, ...args) => {
-                console.log("eventName", eventName);
+                this.log.info({eventName, sessionId: socket.data.sessionId}, 'NEW EVENT');
                 const eventId = await (await this.eventController.saveOne(eventName, JSON.stringify(args)))._id;
                 await this.sessionOrchestrator.updateSession(socket.data.sessionId, eventId, eventName);
             });
+            socket.on('disconnect', async () => {
+                const eventName = 'disconnect';
+                this.log.info({eventName, sessionId: socket.data.sessionId}, 'USER_DISCONNECT');
+                const eventId = await (await this.eventController.saveOne(eventName, 'USER_DISCONNECT'))._id;
+                await this.sessionOrchestrator.updateSession(socket.data.sessionId, eventId, eventName);
+              });
             listOfListenerMethods(socket);
         });
     }

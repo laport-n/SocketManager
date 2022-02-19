@@ -1,5 +1,5 @@
 import './Home.css';
-import Input from './../../components/Input/Input'
+import Input from '../../components/Input/Input'
 import { io } from 'socket.io-client';
 import { useEffect, useState } from 'react';
 import ListMessage from '../../components/ListMessage/ListMessage';
