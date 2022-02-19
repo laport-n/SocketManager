@@ -3,3 +3,5 @@
 src/modules/mongo/mongo-volume
 src/modules/mongo/volumes
 src/modules/mongo/mongo-init.js
+mongo-volume/
+.DS_Store
