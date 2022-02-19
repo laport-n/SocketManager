@@ -1,7 +1,10 @@
-.vscode/
-/node_modules/
-src/modules/mongo/mongo-volume
-src/modules/mongo/volumes
-src/modules/mongo/mongo-init.js
-mongo-volume/
+.vscode
 .DS_Store
+
+backend/.vscode
+backend/node_modules
+backend/src/modules/mongo/mongo-volume
+backend/src/modules/mongo/volumes
+backend/src/modules/mongo/mongo-init.js
+backend/mongo-volume/
+backend/.DS_Store
