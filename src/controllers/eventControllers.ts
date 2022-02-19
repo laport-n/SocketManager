@@ -1,11 +1,13 @@
-import { ModelAcessController } from '../abstracts/abstractController';
 import { EventModel, IEvent } from '../models/event.model';
+import { EventService } from '../services/eventService';
 
-export class EventController extends ModelAcessController<IEvent> {
+export class EventController {
     public model: any;
+    private readonly eventService: EventService;
+
     constructor() {
-        super();
         this.model = EventModel;
+        this.eventService = new EventService();
     }
 
     public async saveOne(eventName: string, value: string): Promise<IEvent> {
@@ -14,6 +16,6 @@ export class EventController extends ModelAcessController<IEvent> {
             value,
             createdAt: new Date()
         }
-        return await this.save(eventToSave);
+        return this.eventService.save(eventToSave);
     }
 }

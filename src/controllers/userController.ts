@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
-import { ModelAcessController } from "../abstracts/abstractController";
 import { IUser, UserModel } from "../models/user.model";
+import { UserService } from "../services/userService";
 
-export class UserController extends ModelAcessController<IUser> {
+export class UserController {
     public model: any;
+    public readonly userService: UserService;
+
     constructor() {
-        super();
         this.model = UserModel;
+        this.userService = new UserService();
     }
 
     public async saveOne(sessionId: mongoose.ObjectId, context: any = {}): Promise<IUser> {
@@ -14,18 +16,10 @@ export class UserController extends ModelAcessController<IUser> {
             context,
             sessions: [ sessionId ],
         }
-        return await this.save(userToSave);
+        return await this.userService.save(userToSave);
     }
     
     public async updateSession(sessionId: mongoose.ObjectId, userId: string) {
-        const filter = {
-            _id: userId
-        }
-        const query = {
-            $push: {
-                sessions: sessionId
-            }
-        }
-        await this.updateOne(filter, query);
+        await this.userService.updateSession(userId, sessionId);
     }
 }
