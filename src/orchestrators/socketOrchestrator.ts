@@ -1,19 +1,17 @@
 import { Server } from 'socket.io';
-import { Redis } from '../redis/redis';
-import { SocketManager } from '../socketManager/socketManager';
-import { config as redisConfig } from "../redis/config";
-import { config as mongoConfig } from "../mongo/config";
-import { Mongo } from '../mongo/mongo';
-import { EventController } from '../../controllers/eventControllers';
-import { SessionController } from '../../controllers/sessionController';
+import { Redis } from '../modules/redis/redis';
+import { SessionOrchestrator } from './SessionOrchestrator';
+import { config as redisConfig } from "../modules/redis/config";
+import { config as mongoConfig } from "../modules/mongo/config";
+import { Mongo } from '../modules/mongo/mongo';
+import { EventController } from '../controllers/eventControllers';
 
-export class SocketWrapper {
+export class SocketOrchestrator {
     private io;
     private redis: Redis;
     private mongo: Mongo;
-    private socketManager: SocketManager;
+    private sessionOrchestrator: SessionOrchestrator;
     private eventController: EventController;
-    private sessionController: SessionController;
 
     constructor(server: any) {
         try {            
@@ -29,11 +27,10 @@ export class SocketWrapper {
             this.mongo.connect(mongoConfig);
 
             // SocketManager
-            this.socketManager = SocketManager.getInstance(this.redis);
+            this.sessionOrchestrator = SessionOrchestrator.getInstance(this.redis);
 
             //Controllers
             this.eventController = new EventController();
-            this.sessionController = new SessionController();
         } catch (err) {
             throw new Error(`[ERROR] error while starting the socketServer ${err}`)
         }
@@ -43,13 +40,13 @@ export class SocketWrapper {
 
         this.io.use(async (socket, next) => {
             const { sessionId } = socket.handshake.auth;
-            await this.socketManager.authenticateSession(sessionId, socket, next);
+            await this.sessionOrchestrator.authenticateSession(sessionId, socket, next);
         });
 
         this.io.on('connection', async (socket) => {
             socket.onAny(async (eventName, ...args) => {
                 const eventId = await (await this.eventController.saveOne(eventName, JSON.stringify(args)))._id;
-                await this.sessionController.updateSession(socket.data.sessionId, eventId, eventName);
+                await this.sessionOrchestrator.updateSession(socket.data.sessionId, eventId, eventName);
             });
             listOfListenerMethods(socket);
         });

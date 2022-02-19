@@ -1,15 +1,16 @@
 import { ExtendedError } from "socket.io/dist/namespace";
-import { JSONUtils } from "../../utils/JSONutils";
-import { Redis } from "../redis/redis";
-import { TSession } from "../redis/types/TSession";
+import { JSONUtils } from "../utils/JSONutils";
+import { Redis } from "../modules/redis/redis";
+import { TSession } from "../modules/redis/types/TSession";
 import * as Logger from "bunyan";
-import { UserController } from "../../controllers/userController";
-import { EventController } from "../../controllers/eventControllers";
-import { SessionController } from "../../controllers/sessionController";
+import { UserController } from "../controllers/userController";
+import { EventController } from "../controllers/eventControllers";
+import { SessionController } from "../controllers/sessionController";
+import mongoose from "mongoose";
 
-export class SocketManager {
+export class SessionOrchestrator {
 
-    public static instance: SocketManager;
+    public static instance: SessionOrchestrator;
     private redis: Redis;
     private log: any;
 
@@ -19,17 +20,17 @@ export class SocketManager {
 
     private constructor(redis: Redis) {
         this.redis = redis;
-        this.log = Logger.createLogger({name: "SocketManager"});
+        this.log = Logger.createLogger({name: "SocketOrchestrator"});
         this.userController = new UserController();
         this.sessionController = new SessionController();
         this.eventController = new EventController();
     }
 
-    public static getInstance(redis: Redis): SocketManager {
-        if (!SocketManager.instance) {
-            SocketManager.instance = new SocketManager(redis);
+    public static getInstance(redis: Redis): SessionOrchestrator {
+        if (!SessionOrchestrator.instance) {
+            SessionOrchestrator.instance = new SessionOrchestrator(redis);
         }
-        return SocketManager.instance;
+        return SessionOrchestrator.instance;
     }
 
     public async authenticateSession(sessionId: string, socket: any, next: (err?: ExtendedError | undefined) => void): Promise<void> {
@@ -80,5 +81,9 @@ export class SocketManager {
             }
         }
         return false;
+    }
+
+    public async updateSession(sessionId: mongoose.ObjectId, eventId: string, eventName: string): Promise<void> {
+        await this.sessionController.updateSession(sessionId, eventId, eventName);
     }
 }
