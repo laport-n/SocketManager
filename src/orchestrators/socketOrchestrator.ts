@@ -1,10 +1,10 @@
 import { Server } from 'socket.io';
 import { Redis } from '../modules/redis/redis';
-import { SessionOrchestrator } from './SessionOrchestrator';
 import { config as redisConfig } from "../modules/redis/config";
 import { config as mongoConfig } from "../modules/mongo/config";
 import { Mongo } from '../modules/mongo/mongo';
 import { EventController } from '../controllers/eventControllers';
+import { SessionOrchestrator } from './sessionOrchestrator';
 
 export class SocketOrchestrator {
     private io;
