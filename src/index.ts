@@ -1,6 +1,6 @@
 import express, { Application, Request, Response } from "express";
 import cors from 'cors';
-import { SocketServer } from './modules/socketServer/socketServer';
+import { SocketWrapper } from './modules/socketWrapper/socketWrapper';
 
 const app: Application = express();
 const port = 3000;
@@ -24,14 +24,14 @@ try {
         console.log(`Connected successfully on port ${port}`);
     });
 
-    const socketServer = new SocketServer(server);
+    const socketWrapper = new SocketWrapper(server);
     const listOfListenerMethods = (socket: any) => {
         socket.on('message', (message: any) => {
             console.log(message);
             console.log("SOCKET-DATA", socket.data);
         });
     }
-    socketServer.listenersInitialization(listOfListenerMethods);
+    socketWrapper.listenersInitialization(listOfListenerMethods);
 
 } catch (error: any) {
     console.error(`Error ${error}`);

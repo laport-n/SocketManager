@@ -2,7 +2,7 @@ version: '3'
 services:
 
   database:
-    image: 'mongo'
+    image: mongo
     container_name: 'mongo-socket-manager'
     environment:
       - MONGO_INITDB_DATABASE=socket-manager
@@ -15,16 +15,7 @@ services:
       - '27017-27019:27017-27019'
 
   cache:
-    image: 'redis-socket-manager'
+    image: redis
     ports:
       - 6379:6379
     command: redis-server --requirepass toto
-
-  server:
-    image: 'socket-manager'
-    ports:
-      - 3000:3000
-    command: redis-server --requirepass toto
-    depends_on:
-      - cache
-      - database

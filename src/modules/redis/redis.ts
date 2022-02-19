@@ -1,14 +1,17 @@
 import { createClient, RedisClientOptions, RedisScripts } from 'redis';
+import * as Logger from "bunyan";
 
 export class Redis {
     private _client;
+    private log: any;
     
     constructor(config?: Omit<RedisClientOptions<never, RedisScripts>, "modules"> | undefined) {
         try {
             this._client = createClient(config);
-            console.log('Redis created');
+            this.log = Logger.createLogger({name: "socketServer"});
+            this.log.info('Redis created');
         } catch (err) {
-            console.log(err);
+            this.log.error(err);
             throw new Error(`[ERROR] while trying to createClient redis, ${err}`);
         }
     }
@@ -17,7 +20,7 @@ export class Redis {
         try {
             if (this._client){
                 await this._client.connect();
-                console.log('Redis connect');
+                this.log.info('Redis connect');
             } else {
             throw new Error(`[ERROR] the client is not created, can't connect to redis`);
             }
