@@ -1,16 +1,16 @@
-import { model, Schema, Document } from 'mongoose';
-import { ISession, SessionSchema } from './session.model';
+import { model, Schema, Document, ObjectId, Types } from 'mongoose';
 
-interface IUser extends Document {
-  userId: string;
-  sessions: ISession[];
+export interface IUser extends Document {
+  sessions: ObjectId[];
   context?: any;
 }
 
-const UserSchema: Schema = new Schema({
-    userId: { type: String, required: true },
-    sessions: { type: [SessionSchema], required: true },
+export const UserSchema: Schema = new Schema({
+    sessions: [{
+        type: Types.ObjectId,
+        ref: 'sessions'
+    }],
     context: { type: Schema.Types.Mixed, required: false }
 });
 
-export const User = model<IUser>('User', UserSchema);
+export const UserModel = model<IUser>('User', UserSchema);

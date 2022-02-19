@@ -1,16 +1,20 @@
-import { model, Schema, Document } from 'mongoose';
-import { IEvent, EventSchema } from './event.model';
+import { model, Schema, Document, Types, ObjectId } from 'mongoose';
 
 export interface ISession extends Document {
   startedAt: Date;
-  endedAt: Date;
-  events?: IEvent[];
+  updatedAt: Date;
+  endedAt?: Date;
+  events?: ObjectId[];
 }
 
 export const SessionSchema: Schema = new Schema({
     startedAt: { type: Date, required: true },
-    endedAt: { type: Date, required: true },
-    events: { type: [EventSchema], required: false }
+    updatedAt: { type: Date, required: true },
+    endedAt: { type: Date, required: false },
+    events: [{
+        type: Types.ObjectId,
+        ref: 'events'
+    }]
 });
 
-export const Session = model<ISession>('Session', SessionSchema);
+export const SessionModel = model<ISession>('Session', SessionSchema);

@@ -2,8 +2,10 @@ import { ExtendedError } from "socket.io/dist/namespace";
 import { JSONUtils } from "../../utils/JSONutils";
 import { Redis } from "../redis/redis";
 import { TSession } from "../redis/types/TSession";
-import crypto from "crypto";
 import * as Logger from "bunyan";
+import { UserController } from "../controllers/userController";
+import { EventController } from "../controllers/eventControllers";
+import { SessionController } from "../controllers/sessionController";
 
 export class SocketManager {
 
@@ -11,9 +13,16 @@ export class SocketManager {
     private redis: Redis;
     private log: any;
 
+    private userController: UserController;
+    private sessionController: SessionController;
+    private eventController: EventController;
+
     private constructor(redis: Redis) {
         this.redis = redis;
         this.log = Logger.createLogger({name: "SocketManager"});
+        this.userController = new UserController();
+        this.sessionController = new SessionController();
+        this.eventController = new EventController();
     }
 
     public static getInstance(redis: Redis): SocketManager {
@@ -29,7 +38,7 @@ export class SocketManager {
             if (sessionId) {
                 if (await this.isSessionExist(sessionId, socket, next)) return next();
             }
-            await this.createNewSession(sessionId, socket);
+            await this.createNewSession(socket);
             return next();
         } else {
             // implémenter la vérification d'un access token
@@ -38,13 +47,15 @@ export class SocketManager {
         }
     }
 
-    private async createNewSession(sessionId: string, socket: any): Promise<void> {
-        sessionId = sessionId ? sessionId : `anonym_${crypto.randomBytes(16).toString("hex")}`;
+    private async createNewSession(socket: any): Promise<void> {
+        const eventId = await (await this.eventController.saveOne('create new user', 'NOTHING'))._id;
+        const sessionId = await (await this.sessionController.saveOne(eventId))._id;
+        const userId = await (await this.userController.saveOne(sessionId, {...socket.context}))._id;
+        socket.data.userId = userId;
         socket.data.sessionId = sessionId;
         this.log.info(`NEW PUBLIC_SESSION IS : ${socket.data.sessionId}`);
-        socket.data.userID = crypto.randomBytes(16).toString("hex");
-        this.log.info(socket.data, `REDIS SAVE`);
-        await this.redis.set(sessionId, JSON.stringify(socket.data));
+        await this.redis.set(sessionId.toString(), JSON.stringify(socket.data));
+        this.log.info(socket.data, `REDIS SAVED`);
         socket.emit('authenticated', { ...socket.data });
     }
 
@@ -54,9 +65,17 @@ export class SocketManager {
         if (sessionStringified && JSONUtils.isParsable(sessionStringified)) {
             session = JSON.parse(sessionStringified) as TSession;
             if (session) {
-                socket.data.sessionId = sessionId;
+                const sessionDocument = await this.sessionController.findOne(sessionId);
+                if (sessionDocument && !sessionDocument.endedAt) {
+                    socket.data.sessionId = sessionId;
+                } else {
+                    const eventId = await (await this.eventController.saveOne('create new session', 'EXISTING_USER'))._id;
+                    const sessionId = await (await this.sessionController.saveOne(eventId))._id;
+                    socket.data.sessionId = sessionId;
+
+                }
                 socket.data.userId = session.userId;
-                socket.emit('authenticated', { userID: socket.data.userID });
+                socket.emit('authenticated', { userId: socket.data.userId });
                 return true;
             }
         }

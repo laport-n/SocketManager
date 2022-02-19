@@ -29,7 +29,7 @@
             sessionId: undefined,
         }
         socket.on('authenticated', (data) => {
-            socket.auth.userID = data.userID;
+            socket.auth.userId = data.userId;
             if (!socket.auth.sessionId) {
                 socket.auth.sessionId = data.sessionId;
             }
