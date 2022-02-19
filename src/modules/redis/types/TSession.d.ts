@@ -1,6 +1,6 @@
 export type TSession = {
-    sessionID: string,
-    userID: string,
+    sessionId: string,
+    userId: string,
     context: {
         [key: string]: any
     }

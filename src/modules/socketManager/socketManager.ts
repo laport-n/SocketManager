@@ -13,7 +13,7 @@ export class SocketManager {
 
     private constructor(redis: Redis) {
         this.redis = redis;
-        this.log = Logger.createLogger({name: "socketServer"});
+        this.log = Logger.createLogger({name: "SocketManager"});
     }
 
     public static getInstance(redis: Redis): SocketManager {
@@ -23,13 +23,13 @@ export class SocketManager {
         return SocketManager.instance;
     }
 
-    public async authenticateSession(sessionID: string, socket: any, next: (err?: ExtendedError | undefined) => void): Promise<void> {
+    public async authenticateSession(sessionId: string, socket: any, next: (err?: ExtendedError | undefined) => void): Promise<void> {
         if (!socket.handshake.auth.isPublic) {
-            this.log.info(`PUBLIC_SESSION: ${sessionID} connecting`);
-            if (sessionID) {
-                if (await this.isSessionExist(sessionID, socket, next)) return next();
+            this.log.info(`PUBLIC_SESSION passed in the socket : ${sessionId} connecting`);
+            if (sessionId) {
+                if (await this.isSessionExist(sessionId, socket, next)) return next();
             }
-            await this.createNewSession(sessionID, socket);
+            await this.createNewSession(sessionId, socket);
             return next();
         } else {
             // implémenter la vérification d'un access token
@@ -38,22 +38,24 @@ export class SocketManager {
         }
     }
 
-    private async createNewSession(sessionID: string, socket: any): Promise<void> {
-        this.log.info(`NOUVELLE SESSION_PUBLIC ${sessionID}`);
-        socket.data.sessionID = sessionID ? sessionID : crypto.randomBytes(16).toString("hex");
+    private async createNewSession(sessionId: string, socket: any): Promise<void> {
+        sessionId = sessionId ? sessionId : `anonym_${crypto.randomBytes(16).toString("hex")}`;
+        socket.data.sessionId = sessionId;
+        this.log.info(`NEW PUBLIC_SESSION IS : ${socket.data.sessionId}`);
         socket.data.userID = crypto.randomBytes(16).toString("hex");
-        await this.redis.set(sessionID, JSON.stringify(socket.data));
-        socket.emit('authenticated', { userID: socket.data.userID });
+        this.log.info(socket.data, `REDIS SAVE`);
+        await this.redis.set(sessionId, JSON.stringify(socket.data));
+        socket.emit('authenticated', { ...socket.data });
     }
 
-    private async isSessionExist(sessionID: string, socket: any, next: (err?: ExtendedError | undefined) => void): Promise<boolean> {
-        const sessionStringified = await this.redis.get(sessionID);
+    private async isSessionExist(sessionId: string, socket: any, next: (err?: ExtendedError | undefined) => void): Promise<boolean> {
+        const sessionStringified = await this.redis.get(sessionId);
         let session: TSession;
         if (sessionStringified && JSONUtils.isParsable(sessionStringified)) {
             session = JSON.parse(sessionStringified) as TSession;
             if (session) {
-                socket.data.sessionID = sessionID;
-                socket.data.userID = session.userID;
+                socket.data.sessionId = sessionId;
+                socket.data.userId = session.userId;
                 socket.emit('authenticated', { userID: socket.data.userID });
                 return true;
             }

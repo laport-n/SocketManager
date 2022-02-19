@@ -6,9 +6,9 @@ export class Redis {
     private log: any;
     
     constructor(config?: Omit<RedisClientOptions<never, RedisScripts>, "modules"> | undefined) {
+        this.log = Logger.createLogger({name: "socketServer"});
         try {
             this._client = createClient(config);
-            this.log = Logger.createLogger({name: "socketServer"});
             this.log.info('Redis created');
         } catch (err) {
             this.log.error(err);
