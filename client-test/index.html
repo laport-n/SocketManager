@@ -1,0 +1,22 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+<script>
+    const URL = "http://localhost:3000";
+    const socket = io(URL, { autoConnect: false, transports : ['websocket']});
+    socket.auth = {
+        sessionID:'session2Test_8',
+    }
+    socket.connect();
+    socket.on('authenticated', (data) => {
+        socket.auth.userID = data.userID;
+    });
+    socket.on('connect', () => {
+      console.log("test");
+    })
+
+    socket.emit('message', { message: 'coucou'});
+    
+    // GESTION DES MULTI EVENTS
+    socket.onAny((event, ...args) => {
+        console.log(event, args);
+    });
+</script>

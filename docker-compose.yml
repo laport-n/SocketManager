@@ -1,0 +1,30 @@
+version: '3'
+services:
+
+  database:
+    image: 'mongo'
+    container_name: 'mongo-socket-manager'
+    environment:
+      - MONGO_INITDB_DATABASE=socket-manager
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    volumes: 
+      - ./../mongo-init.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./mongo-volume:/data/db
+    ports:
+      - '27017-27019:27017-27019'
+
+  cache:
+    image: 'redis-socket-manager'
+    ports:
+      - 6379:6379
+    command: redis-server --requirepass toto
+
+  server:
+    image: 'socket-manager'
+    ports:
+      - 3000:3000
+    command: redis-server --requirepass toto
+    depends_on:
+      - cache
+      - database
