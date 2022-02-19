@@ -1,2 +1,5 @@
 .vscode/
 /node_modules/
+src/modules/mongo/mongo-volume
+src/modules/mongo/volumes
+src/modules/mongo/mongo-init.js
