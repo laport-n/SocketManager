@@ -45,6 +45,7 @@ export class SocketOrchestrator {
 
         this.io.on('connection', async (socket) => {
             socket.onAny(async (eventName, ...args) => {
+                console.log("eventName", eventName);
                 const eventId = await (await this.eventController.saveOne(eventName, JSON.stringify(args)))._id;
                 await this.sessionOrchestrator.updateSession(socket.data.sessionId, eventId, eventName);
             });

@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@types/mongoose": "^5.11.97",
+    "@types/socket.io-client": "^3.0.0",
     "bunyan": "^1.8.15",
     "cors": "^2.8.5",
     "express": "^4.17.2",
