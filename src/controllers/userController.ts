@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { ModelAcessController } from "../abstracts/abstractController";
-import { IUser, UserModel } from "../mongo/model/user.model";
+import { IUser, UserModel } from "../models/user.model";
 
 export class UserController extends ModelAcessController<IUser> {
     public model: any;

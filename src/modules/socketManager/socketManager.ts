@@ -3,9 +3,9 @@ import { JSONUtils } from "../../utils/JSONutils";
 import { Redis } from "../redis/redis";
 import { TSession } from "../redis/types/TSession";
 import * as Logger from "bunyan";
-import { UserController } from "../controllers/userController";
-import { EventController } from "../controllers/eventControllers";
-import { SessionController } from "../controllers/sessionController";
+import { UserController } from "../../controllers/userController";
+import { EventController } from "../../controllers/eventControllers";
+import { SessionController } from "../../controllers/sessionController";
 
 export class SocketManager {
 

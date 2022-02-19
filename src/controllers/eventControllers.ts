@@ -1,5 +1,5 @@
 import { ModelAcessController } from '../abstracts/abstractController';
-import { EventModel, IEvent } from '../mongo/model/event.model';
+import { EventModel, IEvent } from '../models/event.model';
 
 export class EventController extends ModelAcessController<IEvent> {
     public model: any;

@@ -4,8 +4,8 @@ import { SocketManager } from '../socketManager/socketManager';
 import { config as redisConfig } from "../redis/config";
 import { config as mongoConfig } from "../mongo/config";
 import { Mongo } from '../mongo/mongo';
-import { EventController } from '../controllers/eventControllers';
-import { SessionController } from '../controllers/sessionController';
+import { EventController } from '../../controllers/eventControllers';
+import { SessionController } from '../../controllers/sessionController';
 
 export class SocketWrapper {
     private io;

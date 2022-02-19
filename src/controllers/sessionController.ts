@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { ModelAcessController } from "../abstracts/abstractController";
-import { ISession, SessionModel } from "../mongo/model/session.model";
+import { ISession, SessionModel } from "../models/session.model";
 
 export class SessionController extends ModelAcessController<ISession> {
     public model: any;
