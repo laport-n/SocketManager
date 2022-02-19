@@ -8,3 +8,6 @@ backend/src/modules/mongo/volumes
 backend/src/modules/mongo/mongo-init.js
 backend/mongo-volume/
 backend/.DS_Store
+
+
+chat/node_modules
