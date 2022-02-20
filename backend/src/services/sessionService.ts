@@ -9,7 +9,7 @@ export class SessionService extends ModelAcessController<ISession> {
         this.model = SessionModel;
     }
 
-    public async addNewEntry(sessionId: mongoose.ObjectId, eventId: string) {
+    public async addNewEntry(sessionId: mongoose.ObjectId, eventId: string): Promise<void> {
         const filter = {
             _id: sessionId
         }
@@ -24,7 +24,7 @@ export class SessionService extends ModelAcessController<ISession> {
         await this.updateOne(filter, query);
     }
 
-    public async addNewEntryAndCloseSession(sessionId: mongoose.ObjectId, eventId: string) {
+    public async addNewEntryAndCloseSession(sessionId: mongoose.ObjectId, eventId: string): Promise<void> {
         const filter = {
             _id: sessionId
         }

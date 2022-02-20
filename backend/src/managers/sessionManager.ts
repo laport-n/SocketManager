@@ -8,9 +8,9 @@ import { SessionController } from "../controllers/sessionController";
 import mongoose from "mongoose";
 import * as Logger from "bunyan";
 
-export class SessionOrchestrator {
+export class SessionManager {
 
-    public static instance: SessionOrchestrator;
+    public static instance: SessionManager;
     private redis: Redis;
     private log: any;
 
@@ -26,19 +26,20 @@ export class SessionOrchestrator {
         this.eventController = new EventController();
     }
 
-    public static getInstance(redis: Redis): SessionOrchestrator {
-        if (!SessionOrchestrator.instance) {
-            SessionOrchestrator.instance = new SessionOrchestrator(redis);
+    public static getInstance(redis: Redis): SessionManager {
+        if (!SessionManager.instance) {
+            SessionManager.instance = new SessionManager(redis);
         }
-        return SessionOrchestrator.instance;
+        return SessionManager.instance;
     }
 
-    public async authenticateSession(sessionId: string, socket: any, next: (err?: ExtendedError | undefined) => void): Promise<void> {
+    public async authenticateSession(query: any, socket: any, next: (err?: ExtendedError | undefined) => void, io: any): Promise<void> {
+        this.log
         if (!socket.handshake.auth.isPublic) {
-            if (sessionId) {
-                if (await this.isSessionExist(sessionId, socket, next)) return next();
+            if (query.sessionId) {
+                if (await this.isSessionExist(query, socket)) return next();
             }
-            await this.createNewSession(socket);
+            await this.createNewSession(query, socket, io);
             return next();
         } else {
             // implémenter la vérification d'un access token
@@ -47,34 +48,38 @@ export class SessionOrchestrator {
         }
     }
 
-    private async createNewSession(socket: any): Promise<void> {
+    private async createNewSession(query: any, socket: any, io: any): Promise<void> {
         const eventId = await (await this.eventController.saveOne('create new user', 'NOTHING'))._id;
         const sessionId = await (await this.sessionController.saveOne(eventId))._id;
-        const userId = await (await this.userController.saveOne(sessionId, {...socket.context}))._id;
-        socket.data.userId = userId;
+        const { _id, socketId } = await (await this.userController.saveOne(sessionId, query.context));
+        socket.data.userId = _id;
         socket.data.sessionId = sessionId;
+        socket.data.socketId = socketId;
         this.log.info(`NEW PUBLIC_SESSION : ${socket.data.sessionId}`);
-        await this.redis.set(sessionId.toString(), JSON.stringify(socket.data));
+        await this.redis.set(_id.toString(), JSON.stringify(socket.data));
         socket.emit('authenticated', { ...socket.data });
+        io.emit('new_user', { username: JSON.parse(query.context).username });
     }
 
-    private async isSessionExist(sessionId: string, socket: any, next: (err?: ExtendedError | undefined) => void): Promise<boolean> {
-        const sessionStringified = await this.redis.get(sessionId);
+    private async isSessionExist(query: any, socket: any): Promise<boolean> {
+        const sessionStringified = await this.redis.get(query.userId);
         let session: TSession;
         if (sessionStringified && JSONUtils.isParsable(sessionStringified)) {
             session = JSON.parse(sessionStringified) as TSession;
             if (session) {
-                const sessionDocument = await this.sessionController.findOne(sessionId);
+                this.log.info(`EXISTING SESSION IN CACHE USER IS : ${session.userId}`);
+                const sessionDocument = await this.sessionController.findOne(query.sessionId);
                 if (sessionDocument && !sessionDocument.endedAt) {
-                    socket.data.sessionId = sessionId;
+                    socket.data.sessionId = query.sessionId;
                 } else {
                     const eventId = await (await this.eventController.saveOne('create new session', 'EXISTING_USER'))._id;
                     const sessionId = await (await this.sessionController.saveOne(eventId))._id;
                     socket.data.sessionId = sessionId;
-
                 }
                 socket.data.userId = session.userId;
-                socket.emit('authenticated', { userId: socket.data.userId });
+                socket.data.socketId = session.socketId;
+                await this.redis.set(socket.data.userId.toString(), JSON.stringify(socket.data));
+                socket.emit('authenticated', { ...socket.data });
                 return true;
             }
         }

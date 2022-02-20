@@ -11,7 +11,7 @@ export abstract class ModelAcessController<T> {
         return await this.model.findOne({_id: id});
     }
 
-    async find(query: any): Promise<T[] | null> {
+    async find(query: any = {}): Promise<T[] | null> {
         return await this.model.find(query);
     }
 

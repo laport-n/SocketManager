@@ -2,11 +2,9 @@ import { EventModel, IEvent } from '../models/event.model';
 import { EventService } from '../services/eventService';
 
 export class EventController {
-    public model: any;
     private readonly eventService: EventService;
 
     constructor() {
-        this.model = EventModel;
         this.eventService = new EventService();
     }
 

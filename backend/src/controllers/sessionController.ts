@@ -1,15 +1,11 @@
 import mongoose from "mongoose";
-import { ModelAcessController } from "../abstracts/abstractController";
-import { ISession, SessionModel } from "../models/session.model";
+import { ISession } from "../models/session.model";
 import { SessionService } from "../services/sessionService";
 
-export class SessionController extends ModelAcessController<ISession> {
-    public model: any;
+export class SessionController {
     private readonly sessionService: SessionService;
 
     constructor() {
-        super();
-        this.model = SessionModel;
         this.sessionService = new SessionService();
     }
 
@@ -32,5 +28,9 @@ export class SessionController extends ModelAcessController<ISession> {
                 await this.sessionService.addNewEntry(sessionId, eventId);
             break;
         }
+    }
+
+    public async findOne(sessionId: string): Promise<ISession | null> {
+        return await this.sessionService.findOne(sessionId);
     }
 }

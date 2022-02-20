@@ -6,9 +6,9 @@ function ListMessage(props: { historique: {type: string, value: string}[] }) {
     const listItems = props.historique.map((message: any) => {
             switch (message.type) {
                 case 'Out':
-                    return <Out message={message.value}/>
+                    return <Out key={message.value} message={message.value}/>
                 case 'In':
-                    return <In message={message.value}/>
+                    return <In key={message.value} message={message.value}/>
                 case 'Broadcast':
                     // Todo component broadcast (Message to every socket connected);
                     return;

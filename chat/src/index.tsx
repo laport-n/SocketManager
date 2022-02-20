@@ -1,13 +1,18 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Home from './views/Home/Home';
+import Login from './views/Login/Login';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import Panel from './views/Panel/Panel';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Home />
-  </React.StrictMode>,
+    <BrowserRouter>
+      <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/panel" element={<Panel />} />
+      </Routes>
+    </BrowserRouter>,
   document.getElementById('root')
 );
 
