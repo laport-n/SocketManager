@@ -6,7 +6,7 @@ import './Login.css';
 
 function Login() {
 
-    const [userName, setUsername] = useState<string>('');
+    const [userName, setUsername] = useState<string | null>(localStorage.getItem('username'));
     const navigate = useNavigate();
 
     const updateUserName = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -24,7 +24,7 @@ function Login() {
         <div className='m-0 p-0 flex w-full h-[100vh]'>
             <div className="ml-auto mr-auto mt-auto mb-auto w-full max-w-xs">
                 <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                    <FormInput onInput={updateUserName} labelText={"Username"} placeHolder={"Enter your username"} />
+                    <FormInput value={userName} onInput={updateUserName} labelText={"Username"} placeHolder={"Enter your username"} />
                     <div className="flex items-center justify-between">
                         <Button text={"Let's chat"} onClick={onClick} />
                     </div>

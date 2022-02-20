@@ -1,15 +1,15 @@
 import './FormInput.css';
 
-function FormInput( props: { onInput: (event:  React.ChangeEvent<HTMLInputElement>) => void, labelText: string, placeHolder: string }) {
+function FormInput( props: { onInput: (event:  React.ChangeEvent<HTMLInputElement>) => void, labelText: string, placeHolder: string, value:any}) {
 
-    const { onInput, labelText, placeHolder } = props;
+    const { onInput, labelText, placeHolder, value } = props;
 
     return (
         <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
                 {labelText}
             </label>
-            <input onInput={onInput} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder={placeHolder} />
+            <input onInput={onInput} value={value} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder={placeHolder} />
         </div>
     );
 }
