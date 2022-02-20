@@ -49,9 +49,11 @@ export class SessionManager {
     }
 
     private async createNewSession(query: any, socket: any, io: any): Promise<void> {
-        const eventId = await (await this.eventController.saveOne('create new user', 'NOTHING'))._id;
-        const sessionId = await (await this.sessionController.saveOne(eventId))._id;
+        const createUserEvent = await (await this.eventController.saveOne('create new user', 'USER_CREATE'))._id;
+        const createSessionEventId = await (await this.eventController.saveOne('create new session', 'SESSION_CREATE'))._id;
+        const sessionId = await (await this.sessionController.saveOne(createSessionEventId))._id;
         const { _id, socketId } = await (await this.userController.saveOne(sessionId, query.context));
+        await this.sessionController.updateSession(sessionId, createUserEvent, 'USER_CREATE');
         socket.data.userId = _id;
         socket.data.sessionId = sessionId;
         socket.data.socketId = socketId;
@@ -72,12 +74,13 @@ export class SessionManager {
                 if (sessionDocument && !sessionDocument.endedAt) {
                     socket.data.sessionId = query.sessionId;
                 } else {
-                    const eventId = await (await this.eventController.saveOne('create new session', 'EXISTING_USER'))._id;
+                    const eventId = await (await this.eventController.saveOne('create new session', 'SESSION_CREATE'))._id;
                     const sessionId = await (await this.sessionController.saveOne(eventId))._id;
                     socket.data.sessionId = sessionId;
                 }
                 socket.data.userId = session.userId;
                 socket.data.socketId = session.socketId;
+                await this.userController.updateSession(socket.data.sessionId, socket.data.userId );
                 await this.redis.set(socket.data.userId.toString(), JSON.stringify(socket.data));
                 socket.emit('authenticated', { ...socket.data });
                 return true;

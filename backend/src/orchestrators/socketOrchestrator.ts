@@ -51,6 +51,8 @@ export class SocketOrchestrator {
 
         this.io.on('connection', async (socket) => {
             this.log.info({ eventName: 'connection', sessionId: socket.data.sessionId }, 'USER_CONNECT');
+            const eventId = await (await this.eventController.saveOne('connection', 'USER_CONNECT'))._id;
+            await this.sessionManager.updateSession(socket.data.sessionId, eventId, 'connection');
             this.io.emit('user_connect', { userId: socket.data.userId });
             await this.userController.updateIsOnline(socket.data.userId, true);
             socket.onAny(async (eventName, ...args) => {

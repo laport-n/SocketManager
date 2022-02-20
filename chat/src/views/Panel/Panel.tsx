@@ -85,6 +85,13 @@ function Panel() {
     return (
         <div className="flex flex-row flex-1 w-full h-full">
             <div className='flex flex-col drop-shadow-lg basis-1/4 sm:basis-0/4 bg-[#2E0052] z-40 '>
+                <div className='transition duration-300 delay-150 bg-[#7200cb47] flex flex-row min-h-[90px] w-full'>
+                        <div className='pl-8 flex flex-col w-full'>
+                            <div className='text-underline text-white mt-aut mb-auto w-auto mt-auto mb-auto'>
+                                Users
+                            </div>
+                        </div>
+                </div>
                 { users &&
                     users.map((user: any) => (
                         <div key={user.context.username} className='transition duration-300 delay-150 hover:bg-[#7200cb47] hover:cursor-pointer flex flex-row min-h-[90px] w-full'>
@@ -100,7 +107,25 @@ function Panel() {
                         </div>
                     ))
                 }
-            </div>
+                    <div className='transition duration-300 delay-150 bg-[#7200cb47] flex flex-row min-h-[90px] w-full'>
+                            <div className='pl-8 flex flex-col w-full'>
+                                <div className='text-underline text-white mt-aut mb-auto w-auto mt-auto mb-auto'>
+                                    Rooms
+                                </div>
+                            </div>
+                    </div>
+                        <div className='transition duration-300 delay-150 hover:bg-[#7200cb47] hover:cursor-pointer flex flex-row min-h-[90px] w-full'>
+                            <div className='pl-8 flex flex-col w-full'>
+                                <div className='text-white mt-4 mb-0 w-auto mt-auto mb-auto'>
+                                    ReactJS c'est LOURD
+                                </div>
+                                <div className='h-[20px] flex flex-row mt-1 w-auto mt-auto mb-auto text-sm'>
+                                    <BiCircle className='m-0 mr-2' color={'yellow'} size='20px' />
+                                    <p className='text-gray-400'>open to talk</p>
+                                </div>
+                            </div>
+                        </div>
+                </div>
             <div className='flex-1 flex flex-col'>
                 <div className='flex justify-center content-center items-center w-[95%] z-10 space-y-2.5 mr-auto ml-auto mt-5 flex-1 flex-col drop-shadow-lg bg-platinium z-40 '>
                     <h1 className='min-h-[50px] text-5xl font-medium text-slate-900 dark:text-slate-200'>Click on someone username to start chat</h1>
