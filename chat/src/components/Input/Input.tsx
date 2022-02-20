@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Input.css';
 import { Socket } from 'socket.io-client';
 
-function Input(props: { socket: Socket, pushEntryInHistorique: (value:string) => void}) {
+function Input(props: { socket: Socket, pushEntryInHistorique: ({ type, value}: {type: string, value: string}) => void}) {
     
     const [input, setInput] = useState<string>('');
     const [socket, setSocket] = useState(props.socket);
@@ -13,7 +13,10 @@ function Input(props: { socket: Socket, pushEntryInHistorique: (value:string) =>
     const emitMessage = (): void => {
         socket.emit('chat message', input);
         setInput('');
-        props.pushEntryInHistorique(input);
+        props.pushEntryInHistorique({
+            type: 'Out',
+            value: input
+        });
     }
 
     useEffect(() => {

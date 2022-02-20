@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react';
 import ListMessage from '../../components/ListMessage/ListMessage';
 
 function Home() {
-    const [socket, setSocket] = useState<any>(null)
-    const [historique, setHistorique] = useState<string[]>([]);
+    const [socket, setSocket] = useState<any>(null);
+    const [historique, setHistorique] = useState<{type: string, value: string}[]>([]);
 
-    const pushEntryInHistorique = (value: string): void => {
-        setHistorique([...historique, value]);
+    const pushEntryInHistorique = ({type, value}: {type: string, value: string}): void => {
+        setHistorique([...historique, {type, value}]);
     }
 
     useEffect(() => {
@@ -25,7 +25,7 @@ function Home() {
     return (
         <div className="flex flex-col flex-1 w-full h-full">
             
-            <div className="z-0 p-6 mr-auto ml-auto w-[96%] h-[96%] mt-1/6 bg-black rounded-tl-lg rounded-b-lg shadow-lg shadow-indigo-500/50 flex items-center space-x-4">
+            <div className="z-0 p-6 mr-auto ml-auto w-[96%] h-[96%] content-end flex  mt-1/6 bg-black rounded-tl-lg rounded-b-lg shadow-lg shadow-indigo-500/50 flex items-center space-x-4">
                 <ListMessage historique={historique}/>
             </div>
 
