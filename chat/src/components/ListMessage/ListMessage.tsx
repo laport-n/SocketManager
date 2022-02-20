@@ -10,7 +10,7 @@ function ListMessage(props: { historique: {type: string, value: string}[] }) {
                 case 'In':
                     return <In message={message.value}/>
                 case 'Broadcast':
-                    // Todo component broadcast
+                    // Todo component broadcast (Message to every socket connected);
                     return;
                 default:
 
