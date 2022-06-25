@@ -7,6 +7,13 @@ export interface IUser extends Document {
   context?: string;
 }
 
+export interface IUserDTO {
+  isOnline: boolean;
+  sessions: ObjectId[];
+  socketId?: ObjectId;
+  context?: string;
+}
+
 export const UserSchema: Schema = new Schema({
   isOnline: { type: Boolean, requis: true, default: true },
   socketId: {

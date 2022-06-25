@@ -91,7 +91,7 @@ export class SessionManager {
       session = JSON.parse(sessionStringified) as TSession;
       if (session) {
         this.log.info(`EXISTING SESSION IN CACHE USER IS : ${session.userId}`);
-        const sessionDocument = await this.sessionController.findOne(
+        const sessionDocument = await this.sessionController.findOneById(
           query.sessionId,
         );
         if (sessionDocument && !sessionDocument.endedAt) {

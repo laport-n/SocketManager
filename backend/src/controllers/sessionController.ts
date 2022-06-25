@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { ISession } from '../models/session.model';
+import { ISession, ISessionDTO } from '../models/session.model';
 import { SessionService } from '../services/sessionService';
 
 export class SessionController {
@@ -10,7 +10,7 @@ export class SessionController {
   }
 
   public async saveOne(eventId: mongoose.ObjectId): Promise<ISession> {
-    const sessionToSave: Partial<ISession> = {
+    const sessionToSave: ISessionDTO = {
       startedAt: new Date(),
       updatedAt: new Date(),
       events: [eventId],
@@ -37,7 +37,9 @@ export class SessionController {
     }
   }
 
-  public async findOne(sessionId: string): Promise<ISession | null> {
-    return await this.sessionService.findOne(sessionId);
+  public async findOneById(
+    sessionId: string,
+  ): Promise<Partial<ISession> | null> {
+    return await this.sessionService.findOneById(sessionId);
   }
 }

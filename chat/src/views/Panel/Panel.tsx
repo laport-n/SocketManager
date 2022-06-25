@@ -43,7 +43,6 @@ function Panel() {
     };
 
     const getChatRoom = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>, userToTalkTo: any) => {
-        console.log('userToTalkTo', userToTalkTo);
         const res = await fetch("http://localhost:3001/room", {   
             method: "POST",
             headers: {
@@ -113,8 +112,9 @@ function Panel() {
                         </div>
                 </div>
                 { users &&
-                    users.map((user: any) => (
-                        <div onClick={(e) => getChatRoom(e, user)} key={user.context.username} className='transition duration-300 delay-150 hover:bg-[#7200cb47] hover:cursor-pointer flex flex-row min-h-[90px] w-full'>
+                    users.map((user: any) => {
+                        return (
+                        <div onClick={ userId !== user._id ? (e) => getChatRoom(e, user) : undefined } key={user.context.username} className={userId !== user._id ? 'transition duration-300 delay-150 hover:bg-[#7200cb47] hover:cursor-pointer flex flex-row min-h-[90px] w-full' : 'flex flex-row min-h-[90px] w-full'}>
                             <div className='pl-8 flex flex-col w-full'>
                                 <div className='text-white mt-4 mb-0 w-auto mt-auto mb-auto'>
                                     {user.context.username}
@@ -125,7 +125,7 @@ function Panel() {
                                 </div>
                             </div>
                         </div>
-                    ))
+                    )})
                 }
                 </div>
             <div className='flex-1 flex flex-col'>
