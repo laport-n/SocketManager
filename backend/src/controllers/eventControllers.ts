@@ -1,4 +1,4 @@
-import { IEvent } from '../models/event.model';
+import { IEvent, IEventDTO } from '../models/event.model';
 import { EventService } from '../services/eventService';
 
 export class EventController {
@@ -9,7 +9,7 @@ export class EventController {
   }
 
   public async saveOne(eventName: string, value: string): Promise<IEvent> {
-    const eventToSave: Partial<IEvent> = {
+    const eventToSave: IEventDTO = {
       eventName,
       value,
       createdAt: new Date(),

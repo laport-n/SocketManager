@@ -6,6 +6,12 @@ export interface IEvent extends Document {
   createdAt: Date;
 }
 
+export interface IEventDTO {
+  eventName: string;
+  value?: string;
+  createdAt: Date;
+}
+
 export const EventSchema: Schema = new Schema({
   eventName: { type: String, required: true },
   value: { type: String, required: false },

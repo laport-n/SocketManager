@@ -1,14 +1,12 @@
-import * as Logger from 'bunyan';
+import mongoose from 'mongoose';
 import { RoomController } from '../controllers/roomController';
 import { IRoom } from '../models/room.model';
 
 export class RoomOrchestrator {
   public static instance: RoomOrchestrator;
-  private log: any;
   private roomController: RoomController;
 
   private constructor() {
-    this.log = Logger.createLogger({ name: 'RoomOrchestrator' });
     this.roomController = new RoomController();
   }
 
@@ -26,7 +24,6 @@ export class RoomOrchestrator {
     isPublic: boolean,
     invitedUsers: string[],
   ): Promise<IRoom> {
-    this.log.info({ userId, name, context }, 'New room created');
     return await this.roomController.saveOne(
       name,
       userId,
@@ -36,15 +33,30 @@ export class RoomOrchestrator {
     );
   }
 
-  public async getRoomById(roomId: string): Promise<IRoom | null> {
-    return await this.roomController.findOne(roomId);
+  public async getRoomById(
+    roomId: string,
+  ): Promise<Partial<IRoom> | IRoom | null> {
+    return await this.roomController.findOneById(roomId);
   }
 
-  public async getRooms(): Promise<IRoom[] | null> {
+  public async getRooms(): Promise<Partial<IRoom>[] | IRoom[] | null> {
     return await this.roomController.find();
   }
 
   public async userJoin(roomId: string, userId: string): Promise<void> {
     await this.roomController.addNewEntryUser(roomId, userId);
+  }
+
+  public async findRoomByUsers(
+    users: string[],
+  ): Promise<Partial<IRoom> | null> {
+    const eqToCheck = users.map(
+      (userId) => new mongoose.Types.ObjectId(userId),
+    );
+    return await this.roomController.findOne({
+      users: {
+        $eq: eqToCheck,
+      },
+    });
   }
 }

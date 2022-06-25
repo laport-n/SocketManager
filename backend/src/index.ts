@@ -22,16 +22,19 @@ app.get('/', async (_req: Request, res: Response): Promise<Response> => {
 // Example on how implement ROOM feature for a server
 app.post('/room', async (req: Request, res: Response): Promise<Response> => {
   const { userId, name, isPublic, context, invitedUsers } = req.body;
-  console.log(req.body);
   const roomOrchestrator = RoomOrchestrator.getInstance();
-  const room = await roomOrchestrator.createNewRoom(
-    userId,
-    name,
-    context,
-    isPublic,
-    invitedUsers,
-  );
-  console.log(room);
+  // First check if a room already exists by checking if users are the same
+  const usersToCheck = [...invitedUsers, userId];
+  let room = await roomOrchestrator.findRoomByUsers(usersToCheck);
+  if (!room) {
+    room = await roomOrchestrator.createNewRoom(
+      userId,
+      name,
+      context,
+      isPublic,
+      invitedUsers,
+    );
+  }
   return res.status(200).send(room);
 });
 

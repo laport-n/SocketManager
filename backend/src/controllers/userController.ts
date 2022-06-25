@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { IUser } from '../models/user.model';
+import { IUser, IUserDTO } from '../models/user.model';
 import { UserService } from '../services/userService';
 
 export class UserController {
@@ -13,7 +13,7 @@ export class UserController {
     sessionId: mongoose.ObjectId,
     context: string,
   ): Promise<IUser> {
-    const userToSave: Partial<IUser> = {
+    const userToSave: IUserDTO = {
       context,
       isOnline: true,
       sessions: [sessionId],
@@ -32,15 +32,17 @@ export class UserController {
     await this.userService.updateSession(userId, sessionId);
   }
 
-  public async findByUserId(userId: string): Promise<IUser | null> {
+  public async findByUserId(userId: string): Promise<Partial<IUser> | null> {
     return await this.userService.findOne(userId);
   }
 
-  public async findAll(): Promise<IUser[] | null> {
+  public async findAll(): Promise<Partial<IUser>[] | IUser[] | null> {
     return await this.userService.find();
   }
 
-  public async findAllWithoutSessions(): Promise<Partial<IUser[]> | null> {
+  public async findAllWithoutSessions(): Promise<
+    Partial<IUser>[] | IUser[] | null
+  > {
     return await this.userService.find({}, { sessions: 0 });
   }
 }

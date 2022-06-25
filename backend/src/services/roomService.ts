@@ -20,7 +20,7 @@ export class RoomService extends ModelAcessController<IRoom> {
       $set: {
         updatedAt: new Date(),
       },
-      $push: {
+      $addToSet: {
         users: userId,
       },
     };

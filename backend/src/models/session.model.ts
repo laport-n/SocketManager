@@ -7,6 +7,13 @@ export interface ISession extends Document {
   events?: ObjectId[];
 }
 
+export interface ISessionDTO {
+  startedAt: Date;
+  updatedAt: Date;
+  endedAt?: Date;
+  events?: ObjectId[];
+}
+
 export const SessionSchema: Schema = new Schema({
   startedAt: { type: Date, required: true },
   updatedAt: { type: Date, required: true },
