@@ -3,24 +3,22 @@ import { model, Schema, Document, ObjectId, Types } from 'mongoose';
 export interface IUser extends Document {
   isOnline: boolean;
   sessions: ObjectId[];
-  socketId?: ObjectId;
+  socketId: string;
   context?: string;
 }
 
 export interface IUserDTO {
   isOnline: boolean;
   sessions: ObjectId[];
-  socketId?: ObjectId;
+  socketId: string;
   context?: string;
 }
 
 export const UserSchema: Schema = new Schema({
   isOnline: { type: Boolean, requis: true, default: true },
   socketId: {
-    type: Types.ObjectId,
-    index: true,
+    type: String,
     required: true,
-    auto: true,
   },
   sessions: [
     {

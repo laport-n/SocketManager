@@ -70,14 +70,25 @@ try {
 
   const socketOrchestrator = new SocketOrchestrator(server);
   const listOfListenerMethods = (socket: any) => {
-    socket.on('joinRoom', (roomId: string) => {
-      console.log(roomId);
+    socket.on('joinRoom', async (data: any) => {
+      const { roomId, userToTalkTo } = data;
       RoomOrchestrator.getInstance().userJoin(roomId, socket.data.userId);
-      socket.join(roomId);
+      const usersController = new UserController();
+      const user = await usersController.findByUserId(userToTalkTo);
+      if (user?.socketId) {
+        const socketToTlakTo = socketOrchestrator.io.sockets.sockets.get(
+          user.socketId.toString(),
+        );
+        if (socketToTlakTo) {
+          socketToTlakTo.join(roomId);
+          socket.join(roomId);
+        }
+      }
     });
 
-    socket.on('sendMessageRoom', (roomId: string, message: string) => {
-      socket.to(roomId).emit(message);
+    socket.on('sendMessageRoom', (data: any) => {
+      const { roomId, message } = data;
+      socketOrchestrator.io.to(roomId).emit('room-update', { roomId, message });
     });
 
     socket.on('sendMessage', (message: any) => {

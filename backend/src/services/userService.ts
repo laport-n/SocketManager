@@ -9,6 +9,18 @@ export class UserService extends ModelAcessController<IUser> {
     this.model = UserModel;
   }
 
+  public async updateSocket(socketId: string, userId: string): Promise<void> {
+    const filter = {
+      _id: userId,
+    };
+    const query = {
+      $set: {
+        socketId,
+      },
+    };
+    await this.updateOne(filter, query);
+  }
+
   public async updateSession(
     userId: string,
     sessionId: mongoose.ObjectId,
