@@ -12,8 +12,8 @@ export class RoomController {
     name: string,
     userId: any,
     context: any,
-    isPublic: boolean = true,
-    invitedUsers: string[]
+    isPublic = true,
+    _invitedUsers: string[]
   ): Promise<IRoom> {
     const roomToSave: Partial<IRoom> = {
       name,

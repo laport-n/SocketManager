@@ -1,0 +1,9 @@
+/node_modules/*
+/.idea/*
+*.js.map
+.vscode/*
+dist
+clientDist
+coverage
+junit.xml
+/reports*

@@ -1,4 +1,4 @@
-import { EventModel, IEvent } from '../models/event.model';
+import { IEvent } from '../models/event.model';
 import { EventService } from '../services/eventService';
 
 export class EventController {

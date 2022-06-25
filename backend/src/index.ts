@@ -35,7 +35,7 @@ app.post('/room', async (req: Request, res: Response): Promise<Response> => {
   return res.status(200).send(room);
 });
 
-app.get('/room', async (req: Request, res: Response): Promise<Response> => {
+app.get('/room', async (_req: Request, res: Response): Promise<Response> => {
   const roomOrchestrator = RoomOrchestrator.getInstance();
   const rooms = roomOrchestrator.getRooms();
   return res.status(200).send(rooms);
