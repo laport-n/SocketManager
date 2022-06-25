@@ -1,27 +1,29 @@
 import { ModelAcessController } from '../abstracts/abstractController';
 import { IRoom, RoomModel } from '../models/room.model';
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 export class RoomService extends ModelAcessController<IRoom> {
-    public model: any;
-    constructor() {
-        super();
-        this.model = RoomModel;
-    }
+  public model: any;
+  constructor() {
+    super();
+    this.model = RoomModel;
+  }
 
-    public async addNewEntryUser(roomId: string, userId: mongoose.ObjectId): Promise<void> {
-        const filter = {
-            _id: roomId
-        }
-        const query = {
-            $set: {
-                updatedAt: new Date()
-            },
-            $push: {
-                users: userId
-            }
-        }
-        await this.updateOne(filter, query);
-    }
-
+  public async addNewEntryUser(
+    roomId: string,
+    userId: mongoose.ObjectId
+  ): Promise<void> {
+    const filter = {
+      _id: roomId,
+    };
+    const query = {
+      $set: {
+        updatedAt: new Date(),
+      },
+      $push: {
+        users: userId,
+      },
+    };
+    await this.updateOne(filter, query);
+  }
 }

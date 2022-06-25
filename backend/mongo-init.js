@@ -1,12 +1,10 @@
-db.createUser(
+db.createUser({
+  user: 'admin',
+  pwd: 'root',
+  roles: [
     {
-        user: 'admin',
-        pwd: 'root',
-        roles: [
-            {
-                role: 'readWrite',
-                db: 'socket-manager'
-            }
-        ]
-    }
-)
+      role: 'readWrite',
+      db: 'socket-manager',
+    },
+  ],
+});

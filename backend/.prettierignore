@@ -1,0 +1,14 @@
+build
+coverage
+.vscode
+.DS_Store
+
+.vscode
+node_modules
+src/modules/mongo/mongo-volume
+src/modules/mongo/volumes
+src/modules/mongo/mongo-init.js
+mongo-volume/
+.DS_Store
+
+chat/node_modules

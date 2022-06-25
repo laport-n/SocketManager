@@ -8,18 +8,20 @@ export interface IUser extends Document {
 }
 
 export const UserSchema: Schema = new Schema({
-    isOnline: { type: Boolean, requis: true, default: true },
-    socketId: {
+  isOnline: { type: Boolean, requis: true, default: true },
+  socketId: {
+    type: Types.ObjectId,
+    index: true,
+    required: true,
+    auto: true,
+  },
+  sessions: [
+    {
       type: Types.ObjectId,
-      index: true,
-      required: true,
-      auto: true
+      ref: 'sessions',
     },
-    sessions: [{
-        type: Types.ObjectId,
-        ref: 'sessions'
-    }],
-    context: { type: String, required: false }
+  ],
+  context: { type: String, required: false },
 });
 
 export const UserModel = model<IUser>('User', UserSchema);
