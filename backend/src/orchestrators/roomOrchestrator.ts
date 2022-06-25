@@ -20,9 +20,9 @@ export class RoomOrchestrator {
         return RoomOrchestrator.instance;
     }
 
-    public async createNewRoom(userId: string, name: string, context: any, isPublic: boolean): Promise<IRoom> {
+    public async createNewRoom(userId: string, name: string, context: any, isPublic: boolean, invitedUsers: string[]): Promise<IRoom> {
         this.log.info({ userId, name, context }, 'New room created');
-        return await this.roomController.saveOne(name, userId, context, isPublic);
+        return await this.roomController.saveOne(name, userId, context, isPublic, invitedUsers);
     }
 
     public async getRoomById(roomId: string): Promise<IRoom | null> {

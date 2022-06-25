@@ -25,9 +25,11 @@ app.get(
 // Example on how implement ROOM feature for a server
 app.post('/room',
     async (req: Request, res: Response): Promise<Response> => {
-        const { userId, name, isPublic, context } = req.body;
+        const { userId, name, isPublic, context, invitedUsers } = req.body;
+        console.log(req.body);
         const roomOrchestrator = RoomOrchestrator.getInstance();
-        const room = roomOrchestrator.createNewRoom(userId, name, context, isPublic);
+        const room = await roomOrchestrator.createNewRoom(userId, name, context, isPublic, invitedUsers);
+        console.log(room);
         return res.status(200).send(room);
     }
 );
@@ -52,11 +54,10 @@ app.get('/room/:roomId',
 
 
 // USER FEATURE SERVER SIDE
-
 app.get('/users',
-    async (req: Request, res: Response): Promise<Response> => {
+    async (_req: Request, res: Response): Promise<Response> => {
         const usersController = new UserController();
-        const users = await usersController.findAll();
+        const users = await usersController.findAllWithoutSessions();
         return res.status(200).send(users);
     }
 );
@@ -72,6 +73,7 @@ try {
     const listOfListenerMethods = (socket: any) => {
 
         socket.on('joinRoom', (roomId: string) => {
+            console.log(roomId);
             RoomOrchestrator.getInstance().userJoin(roomId, socket.data.userId);
             socket.join(roomId);
         });

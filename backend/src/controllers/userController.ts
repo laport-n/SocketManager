@@ -34,4 +34,7 @@ export class UserController {
         return await this.userService.find();
     }
 
+    public async findAllWithoutSessions(): Promise<Partial<IUser[]> | null> {
+        return await this.userService.find({}, { sessions: 0 });
+    }
 }

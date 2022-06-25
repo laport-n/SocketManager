@@ -7,14 +7,14 @@ export interface IRoom extends Document {
     endedAt?: Date,
     users: ObjectId[],
     context?: any,
-    isPublic?: boolean
+    isPublic: boolean
 }
 
 export const RoomSchema: Schema = new Schema({
     name: { type: String, required: true },
     createdAt: { type: Date, required: true},
     updatedAt: { type: Date, required: true},
-    endedAt: { type: Date, required: true},
+    endedAt: { type: Date, required: false},
     users: [{
         type: Types.ObjectId,
         ref: 'events'

@@ -8,13 +8,13 @@ export class RoomController {
         this.roomService = new RoomService();
     }
 
-    public async saveOne(name: string, user: any, context: any, isPublic: boolean = true): Promise<IRoom> {
+    public async saveOne(name: string, userId: any, context: any, isPublic: boolean = true, invitedUsers: string[]): Promise<IRoom> {
         const roomToSave: Partial<IRoom> = {
             name,
             isPublic,
             createdAt: new Date(),
             updatedAt: new Date(),
-            users: [user],
+            users: [userId],
             context: {...context},
         }
         return this.roomService.save(roomToSave);

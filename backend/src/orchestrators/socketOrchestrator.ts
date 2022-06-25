@@ -51,21 +51,32 @@ export class SocketOrchestrator {
 
         this.io.on('connection', async (socket) => {
             this.log.info({ eventName: 'connection', sessionId: socket.data.sessionId }, 'USER_CONNECT');
+
+            // Generate a connection event
             const eventId = await (await this.eventController.saveOne('connection', 'USER_CONNECT'))._id;
+            // Update the session to add a new event in the history
             await this.sessionManager.updateSession(socket.data.sessionId, eventId, 'connection');
-            this.io.emit('user_connect', { userId: socket.data.userId });
+            // Set the user isOnline status to true
             await this.userController.updateIsOnline(socket.data.userId, true);
+            // Emit an io event 'user_connect' that can be catched by clients to trigger a specific hook
+            this.io.emit('user_connect', { userId: socket.data.userId });
+
+            // Attach a onAny event to the socket
             socket.onAny(async (eventName, ...args) => {
-                this.log.info({ eventName, sessionId: socket.data.sessionId }, 'NEW EVENT');
+                this.log.info({ eventName, sessionId: socket.data.sessionId }, 'NEW EVENT');            
                 const eventId = await (await this.eventController.saveOne(eventName, JSON.stringify(args)))._id;
                 await this.sessionManager.updateSession(socket.data.sessionId, eventId, eventName);
             });
+
+            // Attach a disconnect event to the socket
             socket.on('disconnect', async () => {
                 const eventName = 'disconnect';
                 this.log.info({ eventName, sessionId: socket.data.sessionId }, 'USER_DISCONNECT');
                 const eventId = await (await this.eventController.saveOne(eventName, 'USER_DISCONNECT'))._id;
                 await this.sessionManager.updateSession(socket.data.sessionId, eventId, eventName);
                 await this.userController.updateIsOnline(socket.data.userId, false);
+                socket.data.isOnline = false;
+                await this.redis.set(socket.data.userId.toString(), JSON.stringify(socket.data));
                 this.io.emit('user_disconnect', { userId: socket.data.userId });
             });
             listOfListenerMethods(socket);
