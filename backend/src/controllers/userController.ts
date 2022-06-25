@@ -11,10 +11,12 @@ export class UserController {
 
   public async saveOne(
     sessionId: mongoose.ObjectId,
+    socketId: string,
     context: string,
   ): Promise<IUser> {
     const userToSave: IUserDTO = {
       context,
+      socketId,
       isOnline: true,
       sessions: [sessionId],
     };
@@ -32,8 +34,12 @@ export class UserController {
     await this.userService.updateSession(userId, sessionId);
   }
 
+  public async updateSocket(socketId: string, userId: string) {
+    await this.userService.updateSocket(socketId, userId);
+  }
+
   public async findByUserId(userId: string): Promise<Partial<IUser> | null> {
-    return await this.userService.findOne(userId);
+    return await this.userService.findOneById(userId);
   }
 
   public async findAll(): Promise<Partial<IUser>[] | IUser[] | null> {

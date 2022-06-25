@@ -59,7 +59,8 @@ function Panel() {
             })
         });
         const { _id: id } = await res.json();
-        socket.emit('joinRoom', id);
+        socket.emit('joinRoom', { roomId: id, userToTalkTo: userToTalkTo._id });
+        socket.emit('sendMessageRoom', {roomId: id, message:'test'});
     }
 
     useEffect(() => {
@@ -95,6 +96,10 @@ function Panel() {
 
         socket.on('user_disconnect', (data) => {
             updateUserList();
+        });
+
+        socket.on('room-update', (data: any) => {
+            console.log('data', data);
         });
 
         updateUserList();

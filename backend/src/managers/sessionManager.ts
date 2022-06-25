@@ -68,6 +68,7 @@ export class SessionManager {
     )._id;
     const { _id, socketId } = await await this.userController.saveOne(
       sessionId,
+      socket.id,
       query.context,
     );
     await this.sessionController.updateSession(
@@ -109,9 +110,13 @@ export class SessionManager {
           socket.data.sessionId = sessionId;
         }
         socket.data.userId = session.userId;
-        socket.data.socketId = session.socketId;
+        socket.data.socketId = socket.id;
         await this.userController.updateSession(
           socket.data.sessionId,
+          socket.data.userId,
+        );
+        await this.userController.updateSocket(
+          socket.data.socketId,
           socket.data.userId,
         );
         await this.redis.set(
