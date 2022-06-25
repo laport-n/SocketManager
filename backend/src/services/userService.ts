@@ -11,7 +11,7 @@ export class UserService extends ModelAcessController<IUser> {
 
   public async updateSession(
     userId: string,
-    sessionId: mongoose.ObjectId
+    sessionId: mongoose.ObjectId,
   ): Promise<void> {
     const filter = {
       _id: userId,
@@ -26,7 +26,7 @@ export class UserService extends ModelAcessController<IUser> {
 
   public async updateIsOnline(
     userId: string,
-    isOnline: boolean
+    isOnline: boolean,
   ): Promise<void> {
     const filter = {
       _id: userId,

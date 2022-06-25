@@ -9,7 +9,7 @@ export abstract class ModelAcessController<T> {
 
   async findOne(
     id: string,
-    projection: { [key: string]: number } | undefined = undefined
+    projection: { [key: string]: number } | undefined = undefined,
   ): Promise<T | null> {
     if (projection) {
       return await this.model.findOne({ _id: id }, { projection });
@@ -19,7 +19,7 @@ export abstract class ModelAcessController<T> {
 
   async find(
     query: any = {},
-    projection: { [key: string]: number } | undefined = undefined
+    projection: { [key: string]: number } | undefined = undefined,
   ): Promise<T[] | null> {
     if (projection) {
       await this.model.find(query, projection);

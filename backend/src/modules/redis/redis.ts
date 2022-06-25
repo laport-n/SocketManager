@@ -8,7 +8,7 @@ export class Redis {
   constructor(
     config?:
       | Omit<RedisClientOptions<never, RedisScripts>, 'modules'>
-      | undefined
+      | undefined,
   ) {
     this.log = Logger.createLogger({ name: 'socketServer' });
     try {
@@ -27,7 +27,7 @@ export class Redis {
         this.log.info('Redis connect');
       } else {
         throw new Error(
-          `[ERROR] the client is not created, can't connect to redis`
+          `[ERROR] the client is not created, can't connect to redis`,
         );
       }
     } catch (err) {
@@ -40,7 +40,7 @@ export class Redis {
       await this._client.expire(key, second);
     } else {
       throw new Error(
-        `[ERROR] the client is not created, can't connect to redis`
+        `[ERROR] the client is not created, can't connect to redis`,
       );
     }
   }
@@ -50,7 +50,7 @@ export class Redis {
       await this._client.set(key, value);
     } else {
       throw new Error(
-        `[ERROR] the client is not created, can't connect to redis`
+        `[ERROR] the client is not created, can't connect to redis`,
       );
     }
   }
@@ -60,7 +60,7 @@ export class Redis {
       return await this._client.get(key);
     } else {
       throw new Error(
-        `[ERROR] the client is not created, can't connect to redis`
+        `[ERROR] the client is not created, can't connect to redis`,
       );
     }
   }

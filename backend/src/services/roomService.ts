@@ -11,7 +11,7 @@ export class RoomService extends ModelAcessController<IRoom> {
 
   public async addNewEntryUser(
     roomId: string,
-    userId: mongoose.ObjectId
+    userId: mongoose.ObjectId,
   ): Promise<void> {
     const filter = {
       _id: roomId,

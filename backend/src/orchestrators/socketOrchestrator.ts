@@ -48,14 +48,14 @@ export class SocketOrchestrator {
         socket.handshake.query,
         socket,
         next,
-        this.io
+        this.io,
       );
     });
 
     this.io.on('connection', async (socket) => {
       this.log.info(
         { eventName: 'connection', sessionId: socket.data.sessionId },
-        'USER_CONNECT'
+        'USER_CONNECT',
       );
 
       // Generate a connection event
@@ -66,7 +66,7 @@ export class SocketOrchestrator {
       await this.sessionManager.updateSession(
         socket.data.sessionId,
         eventId,
-        'connection'
+        'connection',
       );
       // Set the user isOnline status to true
       await this.userController.updateIsOnline(socket.data.userId, true);
@@ -77,7 +77,7 @@ export class SocketOrchestrator {
       socket.onAny(async (eventName, ...args) => {
         this.log.info(
           { eventName, sessionId: socket.data.sessionId },
-          'NEW EVENT'
+          'NEW EVENT',
         );
         const eventId = await (
           await this.eventController.saveOne(eventName, JSON.stringify(args))
@@ -85,7 +85,7 @@ export class SocketOrchestrator {
         await this.sessionManager.updateSession(
           socket.data.sessionId,
           eventId,
-          eventName
+          eventName,
         );
       });
 
@@ -94,7 +94,7 @@ export class SocketOrchestrator {
         const eventName = 'disconnect';
         this.log.info(
           { eventName, sessionId: socket.data.sessionId },
-          'USER_DISCONNECT'
+          'USER_DISCONNECT',
         );
         const eventId = await (
           await this.eventController.saveOne(eventName, 'USER_DISCONNECT')
@@ -102,13 +102,13 @@ export class SocketOrchestrator {
         await this.sessionManager.updateSession(
           socket.data.sessionId,
           eventId,
-          eventName
+          eventName,
         );
         await this.userController.updateIsOnline(socket.data.userId, false);
         socket.data.isOnline = false;
         await this.redis.set(
           socket.data.userId.toString(),
-          JSON.stringify(socket.data)
+          JSON.stringify(socket.data),
         );
         this.io.emit('user_disconnect', { userId: socket.data.userId });
       });

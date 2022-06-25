@@ -13,7 +13,7 @@ export class RoomController {
     userId: any,
     context: any,
     isPublic = true,
-    _invitedUsers: string[]
+    _invitedUsers: string[],
   ): Promise<IRoom> {
     const roomToSave: Partial<IRoom> = {
       name,

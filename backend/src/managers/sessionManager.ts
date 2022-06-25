@@ -36,7 +36,7 @@ export class SessionManager {
     query: any,
     socket: any,
     next: (err?: ExtendedError | undefined) => void,
-    io: any
+    io: any,
   ): Promise<void> {
     this.log;
     if (!socket.handshake.auth.isPublic) {
@@ -55,7 +55,7 @@ export class SessionManager {
   private async createNewSession(
     query: any,
     socket: any,
-    io: any
+    io: any,
   ): Promise<void> {
     const createUserEvent = await (
       await this.eventController.saveOne('create new user', 'USER_CREATE')
@@ -68,12 +68,12 @@ export class SessionManager {
     )._id;
     const { _id, socketId } = await await this.userController.saveOne(
       sessionId,
-      query.context
+      query.context,
     );
     await this.sessionController.updateSession(
       sessionId,
       createUserEvent,
-      'USER_CREATE'
+      'USER_CREATE',
     );
     socket.data.userId = _id;
     socket.data.sessionId = sessionId;
@@ -92,7 +92,7 @@ export class SessionManager {
       if (session) {
         this.log.info(`EXISTING SESSION IN CACHE USER IS : ${session.userId}`);
         const sessionDocument = await this.sessionController.findOne(
-          query.sessionId
+          query.sessionId,
         );
         if (sessionDocument && !sessionDocument.endedAt) {
           socket.data.sessionId = query.sessionId;
@@ -100,7 +100,7 @@ export class SessionManager {
           const eventId = await (
             await this.eventController.saveOne(
               'create new session',
-              'SESSION_CREATE'
+              'SESSION_CREATE',
             )
           )._id;
           const sessionId = await (
@@ -112,11 +112,11 @@ export class SessionManager {
         socket.data.socketId = session.socketId;
         await this.userController.updateSession(
           socket.data.sessionId,
-          socket.data.userId
+          socket.data.userId,
         );
         await this.redis.set(
           socket.data.userId.toString(),
-          JSON.stringify(socket.data)
+          JSON.stringify(socket.data),
         );
         socket.emit('authenticated', { ...socket.data });
         return true;
@@ -128,7 +128,7 @@ export class SessionManager {
   public async updateSession(
     sessionId: mongoose.ObjectId,
     eventId: string,
-    eventName: string
+    eventName: string,
   ): Promise<void> {
     await this.sessionController.updateSession(sessionId, eventId, eventName);
   }

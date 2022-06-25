@@ -29,7 +29,7 @@ app.post('/room', async (req: Request, res: Response): Promise<Response> => {
     name,
     context,
     isPublic,
-    invitedUsers
+    invitedUsers,
   );
   console.log(room);
   return res.status(200).send(room);
@@ -48,7 +48,7 @@ app.get(
     const roomOrchestrator = RoomOrchestrator.getInstance();
     const room = roomOrchestrator.getRoomById(roomId as string);
     return res.status(200).send(room);
-  }
+  },
 );
 // ROOM FEATURE SERVER SIDE
 

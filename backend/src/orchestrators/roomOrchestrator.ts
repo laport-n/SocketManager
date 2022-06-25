@@ -24,7 +24,7 @@ export class RoomOrchestrator {
     name: string,
     context: any,
     isPublic: boolean,
-    invitedUsers: string[]
+    invitedUsers: string[],
   ): Promise<IRoom> {
     this.log.info({ userId, name, context }, 'New room created');
     return await this.roomController.saveOne(
@@ -32,7 +32,7 @@ export class RoomOrchestrator {
       userId,
       context,
       isPublic,
-      invitedUsers
+      invitedUsers,
     );
   }
 

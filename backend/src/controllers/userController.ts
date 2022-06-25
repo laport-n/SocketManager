@@ -11,7 +11,7 @@ export class UserController {
 
   public async saveOne(
     sessionId: mongoose.ObjectId,
-    context: string
+    context: string,
   ): Promise<IUser> {
     const userToSave: Partial<IUser> = {
       context,
@@ -23,7 +23,7 @@ export class UserController {
 
   public async updateIsOnline(
     userId: string,
-    isOnline: boolean
+    isOnline: boolean,
   ): Promise<void> {
     await this.userService.updateIsOnline(userId, isOnline);
   }

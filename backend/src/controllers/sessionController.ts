@@ -21,13 +21,13 @@ export class SessionController {
   public async updateSession(
     sessionId: mongoose.ObjectId,
     eventId: string,
-    eventName: string
+    eventName: string,
   ) {
     switch (eventName) {
       case 'disconnect':
         await this.sessionService.addNewEntryAndCloseSession(
           sessionId,
-          eventId
+          eventId,
         );
         break;
 
